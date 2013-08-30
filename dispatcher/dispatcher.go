@@ -4,7 +4,7 @@ type Dispatcher interface {
 	Dispatch(name string, e Event) Event
 	AddListener(name string, listener Listener) Listener
 	On(name string, listener Listener) Listener
-	Once(name string, listener Listener) Listener
+	//Once(name string, listener Listener) Listener
 	RemoveListener(name string, listener Listener)
 	Listeners(name string) []Listener
 	HasListeners(name string) bool
@@ -21,23 +21,31 @@ func NewDispatcher() *dispatcher {
 }
 
 func (d *dispatcher) Dispatch(name string, e Event) Event {
+	e.SetName(name)
+	e.SetDispatcher(d)
+	if d.HasListeners(name) {
+		listeners := d.Listeners(name)
+		for _, l := range listeners {
+			e = l.Listen(e)
+		}
+	}
 	return e
 }
 
 func (d *dispatcher) AddListener(name string, listener Listener) Listener {
 	e := NewEvent()
 	e.SetSubject(listener)
-	d.Dispatch("dispatcher.new.event", e)
 	d.listeners[name] = append(d.listeners[name], listener)
 	return listener
 }
 func (d *dispatcher) On(name string, listener Listener) Listener {
 	return d.AddListener(name, listener)
 }
-func (d *dispatcher) Once(name string, listener Listener) Listener {
-	//@TODO find a way to remove the listener after dispatched
-	return d.AddListener(name, listener)
-}
+
+//func (d *dispatcher) Once(name string, listener Listener) Listener {
+//@TODO find a way to remove the listener after dispatched
+//	return d.AddListener(name, listener)
+//}
 func (d *dispatcher) RemoveListener(name string, listener Listener) {
 	//@TODO this way can get really slow in case of much events gets registered
 	//and deleted, i need to find a better way to do this
