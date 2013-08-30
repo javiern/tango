@@ -2,7 +2,7 @@ package dispatcher
 
 type Event interface {
 	Stopped() bool
-	Stop() nil
+	Stop()
 	Dispatcher() Dispatcher
 	SetDispatcher(d Dispatcher)
 	Name() string
@@ -16,6 +16,11 @@ type event struct {
 	dispatcher Dispatcher
 	stopped    bool
 	subject    interface{}
+}
+
+func NewEvent() *event {
+	e := new(event)
+	return e
 }
 
 func (e *event) Stopped() bool {
@@ -51,5 +56,5 @@ func (e *event) Subject() interface{} {
 }
 
 func (e *event) SetSubject(s interface{}) {
-	e.subject
+	e.subject = s
 }
