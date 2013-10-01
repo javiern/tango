@@ -1,4 +1,4 @@
 language: go
-script: go get github.com/javiern/tango && go test github.com/javiern/tango/ev
+script: go get github.com/javiern/tango/ev -v && go test github.com/javiern/tango/ev
 notifications:
   email: false
